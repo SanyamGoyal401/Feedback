@@ -11,4 +11,6 @@ const __dirname = path.dirname(__filename);
 dotenv.config({path: path.resolve(__dirname, '../.env')});
 
 
+import {connectDB} from './config/db.js';
 
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
