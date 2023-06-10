@@ -8,10 +8,56 @@ import mongoose from 'mongoose';
 //route    Get /api/products/
 //@access  Private
 const allProduct = asyncHandler(async (req, res)=>{
-    const allProducts = await Product.find({});
+    const filter = req.body.filter || null;
+    const sortBy = req.body.sortBy || null;
+    console.log(filter);
+    console.log(sortBy);
+
+    let allProducts = await Product.find({});
+    
+    if(filter){
+        allProducts = allProducts.filter((prod)=>{
+            let cat = prod.category;
+            for(let i of filter){
+                if(prod.category.includes(i)){
+                    return prod;
+                }
+            }
+        })
+    }
+    if(sortBy === 'upvotes'){
+        allProducts = allProducts.sort((p1, p2)=>{p1.upvotes - p2.upvotes});
+        console.log(allProducts);
+    }
+    else{
+        allProducts = allProducts.sort((p1, p2)=>{p1.upvotes + p2.upvotes});
+        console.log(allProducts);
+    }
+    
     if(allProducts){
         res.status(200).json({
             allProducts
+        });
+    }
+    else{
+        res.status(500).json({
+            message: "no data exists"
+        })
+    }
+});
+
+//@desc    All Category
+//route    Get /api/products/category
+//@access  Public
+const allCategory = asyncHandler(async (req, res)=>{
+    const categories = await Product.find({}).select('category -_id');
+    
+// Extract the category values into a single list
+const categoryList = categories.map(item => item.category).flat();
+const uniqueList = [...new Set(categoryList)]    
+if(categoryList){
+        res.status(200).json({
+            'categories': uniqueList
         });
     }
     else{
@@ -142,6 +188,7 @@ const comment = asyncHandler(async (req, res)=>{
 
 export{
     allProduct,
+    allCategory,
     addProduct,
     editProduct,
     upvote,
