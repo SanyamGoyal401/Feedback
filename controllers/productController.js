@@ -6,33 +6,33 @@ import mongoose from 'mongoose';
 
 //@desc    All Product
 //route    Get /api/products/
-//@access  Private
+//@access  Public
 const allProduct = asyncHandler(async (req, res)=>{
-    const filter = req.body.filter || null;
-    const sortBy = req.body.sortBy || null;
+    const filter = req.query.filter;
+    const sortBy = req.query.sortBy || null;
     console.log(filter);
     console.log(sortBy);
+    const filterArray = filter ? filter.split(',') : null;
 
     let allProducts = await Product.find({});
-    
-    if(filter){
+    if(sortBy === 'upvotes'){
+        allProducts = await Product.find({}).sort({upvotes: -1});
+    }
+    if(sortBy === 'downvotes'){
+        allProducts = await Product.find({}).sort({upvotes: 1});
+    }
+
+    if(filterArray){
         allProducts = allProducts.filter((prod)=>{
             let cat = prod.category;
-            for(let i of filter){
+            for(let i of filterArray){
                 if(prod.category.includes(i)){
                     return prod;
                 }
             }
         })
     }
-    if(sortBy === 'upvotes'){
-        allProducts = allProducts.sort((p1, p2)=>{p1.upvotes - p2.upvotes});
-        console.log(allProducts);
-    }
-    else{
-        allProducts = allProducts.sort((p1, p2)=>{p1.upvotes + p2.upvotes});
-        console.log(allProducts);
-    }
+    
     
     if(allProducts){
         res.status(200).json({
