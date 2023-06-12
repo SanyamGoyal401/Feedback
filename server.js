@@ -24,7 +24,8 @@ connectDB();
 const app = express();
 //allow all origin to access
 app.use(cors({
-    origin: '*'
+    origin: 'http://localhost:3000/',
+    credentials: true
 }));
 
 //allow to read request body

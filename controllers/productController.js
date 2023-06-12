@@ -168,11 +168,9 @@ const downvote = asyncHandler(async (req, res)=>{
 //@access  Public
 const comment = asyncHandler(async (req, res)=>{
     const {_id, comment} = req.body;
-    
     const product = await Product.findById(_id).exec();
     if(product){
         product.comments = [...product.comments, comment];
-        
         const updatedProduct = await product.save();
 
         res.status(201).json({
