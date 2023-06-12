@@ -24,14 +24,10 @@ connectDB();
 const app = express();
 //allow all origin to access
 app.use(cors({
-    origin: 'http://localhost:3000/',
-    credentials: true
+    origin: '*',
+    credentials: true,
 }));
 
-app.use((req, res, next)=>{
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
 
 //allow to read request body
 app.use(express.json());
